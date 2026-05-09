@@ -9,6 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Network)
 
@@ -34,6 +36,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         singleton.h
         httpmgr.h httpmgr.cpp
         config.ini
+        timerbtn.h timerbtn.cpp
+        clickedlabel.h clickedlabel.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET IMClient-qt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

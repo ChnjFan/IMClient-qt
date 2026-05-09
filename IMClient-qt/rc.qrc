@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>resource/login.jpg</file>
         <file>style/stylesheet.qss</file>
+        <file>resource/icon/hiden.svg</file>
+        <file>resource/icon/view.svg</file>
+        <file>resource/icon/hiden_hover.svg</file>
+        <file>resource/icon/view_hover.svg</file>
     </qresource>
 </RCC>

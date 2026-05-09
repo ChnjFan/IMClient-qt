@@ -6,10 +6,10 @@
 #include <QByteArray>
 #include <QRegularExpression>
 #include <QString>
+#include <QStyle>
 #include <memory>
 #include <iostream>
 #include <mutex>
-#include "QStyle"
 
 enum ReqId {
     ID_GET_VERIFY_CODE = 1001,  // 获取验证码
@@ -26,11 +26,30 @@ enum ErrorCodes {
     ERR_NETWORK = 2,            // 通用网络错误
 };
 
+enum TipErr {
+    TIP_SUCCESS = 0,
+    TIP_EMAIL_ERR = 1,
+    TIP_PWD_ERR = 2,
+    TIP_COMFIRM_ERR = 3,
+    TIP_PWD_CONFIRM_ERR = 4,
+    TIP_VERIFY_ERR = 5,
+    TIP_USER_ERR = 6,
+};
+
+enum ClickLbState {
+    Normal = 0,
+    Select = 1
+};
+
 extern QString gate_url_prefix;
 
 /*
  * @brief 刷新界面逻辑
  */
 extern std::function<void(QWidget*)> repolish;
+/**
+ * @brief 简单加密逻辑
+ */
+extern std::function<QString(QString)> xorString;
 
 #endif // GLOBAL_H

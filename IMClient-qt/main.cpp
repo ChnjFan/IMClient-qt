@@ -29,9 +29,8 @@ int main(int argc, char *argv[])
     QString config_path = QDir::toNativeSeparators(app_path + QDir::separator() + config_file);
     QSettings settings(config_path, QSettings::IniFormat);
     QString gate_host = settings.value("GateServer/host").toString();
-    QString gate_port = settings.value("Gateserver/port").toString();
+    QString gate_port = settings.value("GateServer/port").toString();
     gate_url_prefix = "http://" + gate_host + ":" + gate_port;
-
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
