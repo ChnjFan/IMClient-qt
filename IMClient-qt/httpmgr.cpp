@@ -48,4 +48,7 @@ void HttpMgr::slot_http_finish(ReqId id, QString res, ErrorCodes err, Modules mo
         // 通知注册结果
         emit sig_reg_mod_finish(id, res, err);
     }
+    else if (mod == Modules::RESETMOD) {
+        emit sig_reset_mod_finish(id, res, err);
+    }
 }

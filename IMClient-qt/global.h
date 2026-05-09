@@ -14,16 +14,21 @@
 enum ReqId {
     ID_GET_VERIFY_CODE = 1001,  // 获取验证码
     ID_REG_USER = 1002,         // 注册用户
+    ID_RESET_PWD = 1003,        // 重置密码
 };
 
 enum Modules {
     REGISTERMOD = 0,            // 注册模块
+    RESETMOD = 1,               // 重置密码模块
 };
 
 enum ErrorCodes {
     SUCCESS = 0,
-    ERR_JSON = 1,               // json 解析失败
-    ERR_NETWORK = 2,            // 通用网络错误
+    ERR_JSON = 1001,               // json 解析失败
+    ERR_NETWORK = 1002,            // 通用网络错误
+    ERR_VERIFY_CODE_EXPIRE = 1003, // 验证码过期
+    ERR_VERIFY_CODE_INVALID = 1004,// 验证码错误
+    ERR_USER_EXISTS = 1005,        // 用户已存在
 };
 
 enum TipErr {

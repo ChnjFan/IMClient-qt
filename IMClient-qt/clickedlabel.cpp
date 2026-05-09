@@ -2,7 +2,7 @@
 
 ClickedLabel::ClickedLabel(QWidget *parent) : QLabel(parent), state_(ClickLbState::Normal)
 {
-
+    this->setCursor(Qt::PointingHandCursor);// 光标设置
 }
 
 void ClickedLabel::mousePressEvent(QMouseEvent *ev)

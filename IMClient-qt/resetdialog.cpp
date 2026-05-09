@@ -1,19 +1,13 @@
-#include <QJsonObject>
-#include <QUrl>
-#include <QString>
-#include <QCryptographicHash>
-
-#include "registerdialog.h"
-#include "ui_registerdialog.h"
+#include "resetdialog.h"
+#include "ui_resetdialog.h"
 #include "httpmgr.h"
-#include "glob.h"
 
-RegisterDialog::RegisterDialog(QWidget *parent)
+ResetDialog::ResetDialog(QWidget *parent)
     : QDialog(parent)
-    , ui(new Ui::RegisterDialog)
-    , return_count_(5)
+    , ui(new Ui::ResetDialog)
 {
     ui->setupUi(this);
+
     ui->passwd_edit->setEchoMode(QLineEdit::Password);
     ui->ack_edit->setEchoMode(QLineEdit::Password);
     // 设置err_tip属性，刷新界面
@@ -21,8 +15,8 @@ RegisterDialog::RegisterDialog(QWidget *parent)
     repolish(ui->err_tip);
 
     // 连接http注册完成的信号
-    connect(HttpMgr::GetInstance().get(), &HttpMgr::sig_reg_mod_finish,
-            this, &RegisterDialog::slot_reg_mod_finish);
+    connect(HttpMgr::GetInstance().get(), &HttpMgr::sig_reset_mod_finish,
+            this, &ResetDialog::slot_reset_mod_finish);
     // 注册处理函数
     initHttpHandlers();
     ui->err_tip->clear();   // 界面切换进来不显示错误提示
@@ -43,88 +37,14 @@ RegisterDialog::RegisterDialog(QWidget *parent)
     connect(ui->verify_edit, &QLineEdit::editingFinished, this, [this](){
         checkVerifyValid();
     });
-
-    // 加载密码显示图标
-    ui->passwd_visible->setState("unvisible", "unvisible_hover", "", "visible", "visible_hover", "");
-    ui->ack_visible->setState("unvisible", "unvisible_hover", "", "visible", "visible_hover", "");
-
-    // 绑定密码输入显示模式的信号
-    connect(ui->passwd_visible, &ClickedLabel::clicked, this, [this](){
-        auto state = ui->passwd_visible->getCurState();
-        if (state == ClickLbState::Normal) {
-            ui->passwd_edit->setEchoMode(QLineEdit::Password);
-        }
-        else {
-            ui->passwd_edit->setEchoMode(QLineEdit::Normal);
-        }
-    });
-
-    connect(ui->ack_visible, &ClickedLabel::clicked, this, [this](){
-        auto state = ui->ack_visible->getCurState();
-        if (state == ClickLbState::Normal) {
-            ui->ack_edit->setEchoMode(QLineEdit::Password);
-        }
-        else {
-            ui->ack_edit->setEchoMode(QLineEdit::Normal);
-        }
-    });
-
-    // 初始化倒计时定时器
-    return_timer_ = new QTimer(this);
-    connect(return_timer_, &QTimer::timeout, [this](){
-        if (return_count_ == 0) {
-            return_timer_->stop();
-            emit sigSwitchLogin();//通知切换到登录界面
-            return;
-        }
-        return_count_--;
-        auto success_tips = QString("注册成功，%1 秒后返回登录").arg(return_count_);
-        ui->success_tips->setText(success_tips);
-        repolish(ui->success_tips);
-    });
 }
 
-RegisterDialog::~RegisterDialog()
+ResetDialog::~ResetDialog()
 {
     delete ui;
 }
 
-void RegisterDialog::on_get_code_clicked()
-{
-    auto email = ui->email_edit->text();
-    QRegularExpression regex(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
-
-    if (regex.match(email).hasMatch()) {
-        // 匹配邮箱后发送验证码
-        QJsonObject json_obj;
-        json_obj["email"] = email;
-        HttpMgr::GetInstance()->PostHttpReq(QUrl(gate_url_prefix + "/get_verify_code"),
-                                            json_obj, ReqId::ID_GET_VERIFY_CODE, Modules::REGISTERMOD);
-    }
-    else {
-        showTip(tr("邮箱地址不正确"), false);
-    }
-}
-
-void RegisterDialog::slot_reg_mod_finish(ReqId id, QString res, ErrorCodes err)
-{
-    if (err != ErrorCodes::SUCCESS) {
-        showTip(tr("网络请求错误"), false);
-        return;
-    }
-
-    // 解析返回的 json 串
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(res.toUtf8());
-    if (jsonDoc.isEmpty() || !jsonDoc.isObject()) {
-        showTip(tr("json解析失败"), false);
-        return;
-    }
-
-    handlers_[id](jsonDoc.object());
-    return;
-}
-
-void RegisterDialog::initHttpHandlers()
+void ResetDialog::initHttpHandlers()
 {
     // 验证码功能结果
     handlers_.insert(ReqId::ID_GET_VERIFY_CODE, [this](const QJsonObject& jsonObj) {
@@ -139,22 +59,20 @@ void RegisterDialog::initHttpHandlers()
         qDebug() << "email is " << email;
     });
     // 注册结果
-    handlers_.insert(ReqId::ID_REG_USER, [this](const QJsonObject& jsonObj){
+    handlers_.insert(ReqId::ID_RESET_PWD, [this](const QJsonObject& jsonObj){
         int error = jsonObj["error"].toInt();
         if (error != ErrorCodes::SUCCESS) {
-            showTip(tr("用户注册失败"), false);
+            showTip(tr("密码重置失败"), false);
             return;
         }
 
         auto email = jsonObj["email"].toString();
-        showTip(tr("用户注册成功"), true);
+        showTip(tr("密码重置成功，点击返回登录"), true);
         qDebug() << "email is " << email;
-
-        changeRegSuccessTipsPage(); // 切换到提示界面
     });
 }
 
-void RegisterDialog::showTip(QString str, bool is_ok)
+void ResetDialog::showTip(QString str, bool is_ok)
 {
     ui->err_tip->setText(str);
     if (is_ok) {
@@ -167,13 +85,13 @@ void RegisterDialog::showTip(QString str, bool is_ok)
     repolish(ui->err_tip);
 }
 
-void RegisterDialog::AddTipErr(TipErr te, QString tips)
+void ResetDialog::AddTipErr(TipErr te, QString tips)
 {
     tip_error_[te] = tips;
     showTip(tips, false);
 }
 
-void RegisterDialog::DelTipErr(TipErr te)
+void ResetDialog::DelTipErr(TipErr te)
 {
     tip_error_.remove(te);
     if (tip_error_.empty()) {
@@ -183,7 +101,7 @@ void RegisterDialog::DelTipErr(TipErr te)
     showTip(tip_error_.first(), false);
 }
 
-bool RegisterDialog::checkUserValid()
+bool ResetDialog::checkUserValid()
 {
     if (ui->user_edit->text() == "") {
         AddTipErr(TipErr::TIP_USER_ERR, tr("用户名不能为空"));
@@ -194,7 +112,7 @@ bool RegisterDialog::checkUserValid()
     return true;
 }
 
-bool RegisterDialog::checkEmailValid()
+bool ResetDialog::checkEmailValid()
 {
     QRegularExpression regex(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
     auto email = ui->email_edit->text();
@@ -208,7 +126,7 @@ bool RegisterDialog::checkEmailValid()
     return true;
 }
 
-bool RegisterDialog::checkPasswdValid()
+bool ResetDialog::checkPasswdValid()
 {
     auto passwd = ui->passwd_edit->text();
     auto confirm = ui->ack_edit->text();
@@ -237,7 +155,7 @@ bool RegisterDialog::checkPasswdValid()
     return true;
 }
 
-bool RegisterDialog::checkConfirmValid()
+bool ResetDialog::checkConfirmValid()
 {
     auto passwd = ui->passwd_edit->text();
     auto confirm = ui->ack_edit->text();
@@ -253,7 +171,7 @@ bool RegisterDialog::checkConfirmValid()
     return true;
 }
 
-bool RegisterDialog::checkVerifyValid()
+bool ResetDialog::checkVerifyValid()
 {
     auto verify = ui->verify_edit->text();
     if (verify.length() != 4) {
@@ -264,15 +182,12 @@ bool RegisterDialog::checkVerifyValid()
     return true;
 }
 
-void RegisterDialog::changeRegSuccessTipsPage()
+void ResetDialog::on_cancel_btn_clicked()
 {
-    return_timer_->stop();
-    // 页面切换到注册成功提示页面
-    ui->stackedWidget->setCurrentWidget(ui->successTipsPage);
-    return_timer_->start(1000);
+    emit sigSwitchLogin();
 }
 
-void RegisterDialog::on_sure_btn_clicked()
+void ResetDialog::on_sure_btn_clicked()
 {
     QJsonObject json_obj;
 
@@ -280,11 +195,11 @@ void RegisterDialog::on_sure_btn_clicked()
     QString passwd = ui->passwd_edit->text();
     QString confirm = ui->ack_edit->text();
     if (0 == passwd.length()) {
-        showTip(tr("请输入密码"), false);
+        showTip(tr("请输入新密码"), false);
         return;
     }
     if (passwd != confirm) {
-        showTip(tr("用户密码确认不一致"), false);
+        showTip(tr("重置密码确认不一致"), false);
         return;
     }
 
@@ -305,20 +220,42 @@ void RegisterDialog::on_sure_btn_clicked()
     json_obj["confirm"] = passwd_res;
     json_obj["verify_code"] = ui->verify_edit->text();
 
-    HttpMgr::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/user_register"),
-                                        json_obj, ReqId::ID_REG_USER, Modules::REGISTERMOD);
+    HttpMgr::GetInstance()->PostHttpReq(QUrl(gate_url_prefix+"/reset_passwd"),
+                                        json_obj, ReqId::ID_RESET_PWD, Modules::RESETMOD);
 }
 
-
-void RegisterDialog::on_return_btn_clicked()
+void ResetDialog::slot_reset_mod_finish(ReqId id, QString res, ErrorCodes err)
 {
-    return_timer_->stop();
-    emit sigSwitchLogin();
+    if (err != ErrorCodes::SUCCESS) {
+        showTip(tr("网络请求错误"), false);
+        return;
+    }
+
+    // 解析返回的 json 串
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(res.toUtf8());
+    if (jsonDoc.isEmpty() || !jsonDoc.isObject()) {
+        showTip(tr("json解析失败"), false);
+        return;
+    }
+
+    handlers_[id](jsonDoc.object());
+    return;
 }
 
-void RegisterDialog::on_cancel_btn_clicked()
+void ResetDialog::on_get_code_clicked()
 {
-    return_timer_->stop();
-    emit sigSwitchLogin();
+    auto email = ui->email_edit->text();
+    QRegularExpression regex(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
+
+    if (regex.match(email).hasMatch()) {
+        // 匹配邮箱后发送验证码
+        QJsonObject json_obj;
+        json_obj["email"] = email;
+        HttpMgr::GetInstance()->PostHttpReq(QUrl(gate_url_prefix + "/get_verify_code"),
+                                            json_obj, ReqId::ID_GET_VERIFY_CODE, Modules::RESETMOD);
+    }
+    else {
+        showTip(tr("邮箱地址不正确"), false);
+    }
 }
 
