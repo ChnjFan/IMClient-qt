@@ -203,13 +203,13 @@ void ResetDialog::on_sure_btn_clicked()
         return;
     }
 
-    QString user = ui->user_edit->text();
-    if (user.length() == 0) {
+    QString email = ui->email_edit->text();
+    if (email.length() == 0) {
         showTip(tr("请输入用户名"), false);
         return;
     }
 
-    QString salt = "salt_" + user;
+    QString salt = "salt_" + email;
     QByteArray bytes = (passwd + salt).toUtf8();
     QByteArray hash = QCryptographicHash::hash(bytes, QCryptographicHash::Sha256);
     QString passwd_res = hash.toHex(); // 转成字符串存库

@@ -1,10 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>resource/login.jpg</file>
         <file>style/stylesheet.qss</file>
         <file>resource/icon/hiden.svg</file>
         <file>resource/icon/view.svg</file>
         <file>resource/icon/hiden_hover.svg</file>
         <file>resource/icon/view_hover.svg</file>
+        <file>resource/background/Home.svg</file>
+        <file>resource/avatar/boy_blue.svg</file>
+        <file>resource/avatar/boy_cyan.svg</file>
+        <file>resource/avatar/boy_yellow.svg</file>
+        <file>resource/avatar/girl_blue.svg</file>
+        <file>resource/avatar/girl_purple.svg</file>
+        <file>resource/avatar/gril_pink.svg</file>
     </qresource>
 </RCC>

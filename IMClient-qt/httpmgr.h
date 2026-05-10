@@ -34,6 +34,7 @@ signals:
     // 注册完成信号
     void sig_reg_mod_finish(ReqId id, QString res, ErrorCodes err);
     void sig_reset_mod_finish(ReqId id, QString res, ErrorCodes err);
+    void sig_login_mod_finish(ReqId id, QString res, ErrorCodes err);
 };
 
 #endif // HTTPMGR_H
