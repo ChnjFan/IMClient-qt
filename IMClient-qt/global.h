@@ -16,6 +16,8 @@ enum ReqId {
     ID_REG_USER = 1002,         // 注册用户
     ID_RESET_PWD = 1003,        // 重置密码
     ID_USER_LOGIN = 1004,       // 登录用户
+    ID_CHAT_LOGIN = 1005,       // 登录聊天服务器
+    ID_CHAT_LOGIN_RSP = 1006,   // 登录聊天服务器响应
 };
 
 enum Modules {
@@ -46,6 +48,11 @@ enum TipErr {
 enum ClickLbState {
     Normal = 0,
     Select = 1
+};
+
+struct ServerInfo {
+    QString host;
+    QString port;
 };
 
 extern QString gate_url_prefix;

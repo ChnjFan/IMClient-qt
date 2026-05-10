@@ -8,6 +8,7 @@
 
 #include "ui_logindialog.h"
 #include "httpmgr.h"
+#include "tcpmgr.h"
 
 LoginDialog::LoginDialog(QWidget *parent)
     : QDialog(parent)
@@ -36,6 +37,12 @@ LoginDialog::LoginDialog(QWidget *parent)
         }
     });
 
+    // 登录验证后的聊天服务器
+    // 登录成功后，发送 TCP 建立信号到 TcpMgr 的槽执行 socket 连接
+    connect(this, &LoginDialog::sig_connect_tcp, TcpMgr::GetInstance().get(), &TcpMgr::slot_tcp_connect);
+    // TCP 建链成功后，登录界面要切换到聊天界面
+    connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_conn_success, this, &LoginDialog::slot_tcp_con_finish);
+
     // 提示
     ui->err_tip->clear();
 }
@@ -58,9 +65,13 @@ void LoginDialog::initHttpHandlers()
         auto uid = jsonObj["uid"].toInt();
 
         // todo: 根据服务器返回聊天服务地址，建立 TCP 长连接
-        emit sig_connect_tcp();
+        ServerInfo info{
+            jsonObj["host"].toString(),
+            jsonObj["port"].toString()
+        };
+        emit sig_connect_tcp(info);
 
-        showTip(tr("登录成功"), true);
+        // showTip(tr("登录成功"), true);
         qDebug() << "uid is " << uid;
     });
 }
@@ -174,5 +185,10 @@ void LoginDialog::slot_login_mod_finish(ReqId id, QString res, ErrorCodes err)
 
     handlers_[id](jsonDoc.object());
     return;
+}
+
+void LoginDialog::slot_tcp_con_finish(bool success)
+{
+
 }
 
