@@ -12,5 +12,14 @@
         <file>resource/avatar/girl_blue.svg</file>
         <file>resource/avatar/girl_purple.svg</file>
         <file>resource/avatar/gril_pink.svg</file>
+        <file>resource/icon/addpeople_fill.svg</file>
+        <file>resource/icon/addpeople.svg</file>
+        <file>resource/icon/delete_fill.svg</file>
+        <file>resource/icon/delete.svg</file>
+        <file>resource/icon/search.svg</file>
+        <file>resource/icon/searchfill.svg</file>
+        <file>resource/icon/refresh.svg</file>
+        <file>resource/icon/emoji.png</file>
+        <file>resource/icon/document.png</file>
     </qresource>
 </RCC>

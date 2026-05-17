@@ -53,3 +53,142 @@ background-color:rgb(255,255,255)
 #forget_label[state='hover'], #forget_label[state='select_hover'] {
     color:blue;
 }
+
+#side_bar {
+    background-color:rgb(46,46,46);
+}
+
+#add_btn[state='normal'] {
+    border-image: url(:/resource/icon/addpeople.svg);
+}
+
+#add_btn[state='hover'] {
+    border-image: url(:/resource/icon/addpeople_fill.svg);
+}
+
+#add_btn[state='press'] {
+    border-image: url(:/resource/icon/addpeople_fill.svg);
+}
+
+#search_wid {
+    background-color:rgb(247,247,247);
+}
+
+#chat_user_wid {
+    background-color:rgb(0,0,0);
+}
+
+#chat_user_list {
+    background-color:rgb(247,247,248);
+    border: none;
+}
+
+#chat_user_list::item::selected {
+    background-color: #d3d7d4;
+    border: none;
+    outline: none;
+}
+
+#chat_user_list::item::hover {
+    background-color: rgb(206,207,208);
+    border: none;
+    outline: none;
+}
+
+#chat_user_list::item::focus {
+    border: none;
+    outline: none;
+}
+
+ChatUserWid {
+    background-color:rgb(247,247,247);
+    border: none;
+}
+
+#chat_lb {
+    color: rgb(153,153,153);
+    font-size: 12px;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "SimHei", sans-serif;
+}
+
+#name_lb {
+    color: rgb(0,0,0);
+    font-size: 14px;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "SimHei", sans-serif;
+}
+
+#time_wid #time_lb {
+    color: rgb(153,153,153);
+    font-size: 12px;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "SimHei", sans-serif;
+}
+
+QScrollBar::vertical {
+    background: transparent; /* 轨道背景透明 */
+    width: 8px;
+    margin: 0px;
+}
+
+QScrollBar::handle::vertical {
+    background: rgb(173,170,169); /* 滑块颜色 */
+    min-height: 10px;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+    border: none;
+    background: transparent;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-subpage:vertical {
+    background: none;
+}
+
+LoadingDialog {
+    background: #f2eada;
+}
+
+#title_lb {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "SimHei", sans-serif;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+#emo_lb[state='normal'], #emo_lb[state='hover'], #emo_lb[state='press'] {
+    border-image: url(:/resource/icon/emoji.png);
+}
+
+#file_lb[state='normal'], #file_lb[state='hover'], #file_lb[state='press'] {
+    border-image: url(:/resource/icon/document.png);
+}
+
+#send_wid {
+    background: #ffffffff;
+}
+
+#chat_edit {
+    border: none;
+    outline: none;
+    min-width: 400px;
+}
+
+#chat_bg {
+    background: #f0f0f0;
+}
+
+#chat_area {
+    border: none;
+}
+
+#side_chat_lb[state='normal'], #side_chat_lb[state='hover'], #side_chat_lb[state='press'] {
+    border-image: url(:/resource/avatar/boy_blue.svg);
+}
+
+#side_chat_lb[state='selected_normal'], #side_chat_lb[state='selected_hover'], #side_chat_lb[state='selected_pressed'] {
+    border-image: url(:/resource/avatar/boy_blue.svg);
+}
+
+#side_contact_lb[state='normal'], #side_contact_lb[state='hover'], #side_contact_lb[state='press'] {
+    border-image: url(:/resource/avatar/gril_purple.svg);
+}

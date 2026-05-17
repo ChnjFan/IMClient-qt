@@ -50,9 +50,41 @@ enum ClickLbState {
     Select = 1
 };
 
+enum ChatUIMode {
+    ChatMode = 1,
+    ContactMode = 2,
+    SearchMode = 3,
+};
+
 struct ServerInfo {
+    int uid;
+    QString token;
     QString host;
     QString port;
+};
+
+// 列表项名称
+enum ListItemType {
+    CHAT_USER_ITEM,     // 聊天用户
+    CONTACT_USER_ITEM,  // 联系人用户
+    SEARCH_USER_ITEM,   // 搜索用户
+};
+
+enum ChatRole {
+    Self,   // 自己发送
+    Other,  // 接收其他人
+};
+
+enum MsgStatus{
+    UN_READ = 0,  //对方未读
+    SEND_FAILED = 1,  //发送失败
+    READED = 2  //对方已读
+};
+
+struct MsgInfo{
+    QString msgFlag;//"text,image,file"
+    QString content;//表示文件和图像的url,文本信息
+    QPixmap pixmap;//文件和图片的缩略图
 };
 
 extern QString gate_url_prefix;

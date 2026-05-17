@@ -39,6 +39,7 @@ signals:
     void sig_conn_success(bool success);
     void sig_send_data(ReqId id, QString data);
     void sig_login_failed(int err);
+    void sig_switch_chat_dialog();
 };
 
 #endif // TCPMGR_H

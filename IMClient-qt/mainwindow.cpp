@@ -1,4 +1,7 @@
 #include "mainwindow.h"
+
+#include <QSize>
+
 #include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -17,6 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(login_dialog_, &LoginDialog::switchRegister, this, &MainWindow::SlotSwitchReg);
     // 连接重置密码界面信号
     connect(login_dialog_, &LoginDialog::switchReset, this, &MainWindow::SlotSwitchReset);
+    // 聊天界面切换
+    connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_switch_chat_dialog, this, &MainWindow::SlotSwitchChat);
+
+    // test: 聊天界面
+    emit TcpMgr::GetInstance()->sig_switch_chat_dialog();
 }
 
 MainWindow::~MainWindow()
@@ -57,13 +65,25 @@ void MainWindow::SlotSwitchLogin()
 
 void MainWindow::SlotSwitchReset()
 {
-    reset_diaglog_ = new ResetDialog(this);
-    reset_diaglog_->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    reset_dialog_ = new ResetDialog(this);
+    reset_dialog_->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 
-    setCentralWidget(reset_diaglog_);
+    setCentralWidget(reset_dialog_);
     login_dialog_->hide();// 隐藏登录界面
-    reset_diaglog_->show();
+    reset_dialog_->show();
 
     // 重置成功返回信号
-    connect(reset_diaglog_, &ResetDialog::sigSwitchLogin, this, &MainWindow::SlotSwitchLogin);
+    connect(reset_dialog_, &ResetDialog::sigSwitchLogin, this, &MainWindow::SlotSwitchLogin);
+}
+
+void MainWindow::SlotSwitchChat()
+{
+    chat_dialog_ = new ChatDialog(this);
+    // 设置窗口标志，去掉默认标题栏、边框，自定义窗口提示
+    chat_dialog_->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    setCentralWidget(chat_dialog_);
+    login_dialog_->hide();
+    chat_dialog_->show();
+    this->setMinimumSize(QSize(900, 500));
+    this->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 }

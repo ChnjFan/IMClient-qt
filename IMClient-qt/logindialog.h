@@ -30,6 +30,7 @@ private:
     Ui::LoginDialog *ui;
     QMap<ReqId, std::function<void(const QJsonObject&)>> handlers_;
     QMap<TipErr, QString> tip_error_;
+    ServerInfo server_;
 
 private slots:
     void slot_forget_passwd();
@@ -37,6 +38,7 @@ private slots:
     void slot_login_mod_finish(ReqId id, QString res, ErrorCodes err);
 
     void slot_tcp_con_finish(bool success);
+    void slot_login_fail(int err);
 
 signals:
     void switchRegister();

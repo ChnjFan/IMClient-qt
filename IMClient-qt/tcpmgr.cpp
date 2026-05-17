@@ -4,6 +4,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#include "usermgr.h"
+
 TcpMgr::~TcpMgr()
 {
 
@@ -32,7 +34,7 @@ TcpMgr::TcpMgr() : host_(""), port_(0), recv_pending(false), message_id_(0), mes
                 // QDataStream 在写入数据时强制转换为大端网络序，所以读的时候也是自动从大端序转换回来
                 stream >> message_id_ >> message_len_;
                 buffer_ = buffer_.mid(sizeof(quint16) * 2); // 将报文头移除
-                qDebug() << "Recv tcp msg: id = " << message_id_ << "len= = " << message_len_;
+                qDebug() << "Recv tcp msg: id = " << message_id_ << "len = " << message_len_;
             }
 
             if (buffer_.length() < message_len_) {
@@ -88,9 +90,13 @@ void TcpMgr::initHandlers()
             return;
         }
 
-        // todo: 保存用户登录信息
+        qDebug() << "Chatserver login user: " << jsonObj["name"].toString();
+        // 保存用户登录信息
+        UserMgr::GetInstance()->setUid(jsonObj["uid"].toInt());
+        UserMgr::GetInstance()->setName(jsonObj["name"].toString());
+        UserMgr::GetInstance()->setToken(jsonObj["token"].toString());
 
-        // emit sig_switch_chat_dialog();
+        emit sig_switch_chat_dialog();
 
     });
 }
@@ -109,6 +115,7 @@ void TcpMgr::slot_tcp_connect(ServerInfo serverInfo)
     // 用户登录成功后，获取到服务器地址进行连接
     host_ = serverInfo.host;
     port_ = static_cast<uint16_t>(serverInfo.port.toUInt());
+    qDebug() << "Connect to " << host_ << ":" << port_;
     socket_.connectToHost(host_, port_);
 }
 

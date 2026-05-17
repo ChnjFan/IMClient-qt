@@ -42,7 +42,7 @@ LoginDialog::LoginDialog(QWidget *parent)
     connect(this, &LoginDialog::sig_connect_tcp, TcpMgr::GetInstance().get(), &TcpMgr::slot_tcp_connect);
     // TCP 建链成功后，登录界面要切换到聊天界面
     connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_conn_success, this, &LoginDialog::slot_tcp_con_finish);
-
+    connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_login_failed, this, &LoginDialog::slot_login_fail);
     // 提示
     ui->err_tip->clear();
 }
@@ -61,18 +61,14 @@ void LoginDialog::initHttpHandlers()
             return;
         }
 
-        auto email = jsonObj["email"].toString();
-        auto uid = jsonObj["uid"].toInt();
+        // 根据服务器返回聊天服务地址，建立 TCP 长连接
+        server_.host = jsonObj["host"].toString();
+        server_.port = jsonObj["port"].toString();
+        server_.token = jsonObj["token"].toString();
+        server_.uid = jsonObj["uid"].toInt();
+        emit sig_connect_tcp(server_);
 
-        // todo: 根据服务器返回聊天服务地址，建立 TCP 长连接
-        ServerInfo info{
-            jsonObj["host"].toString(),
-            jsonObj["port"].toString()
-        };
-        emit sig_connect_tcp(info);
-
-        // showTip(tr("登录成功"), true);
-        qDebug() << "uid is " << uid;
+        qDebug() << "uid is " << jsonObj["uid"].toInt();
     });
 }
 
@@ -189,6 +185,26 @@ void LoginDialog::slot_login_mod_finish(ReqId id, QString res, ErrorCodes err)
 
 void LoginDialog::slot_tcp_con_finish(bool success)
 {
+    if (success) {
+        showTip(tr("聊天服务连接成功，正在登录..."), true);
+        // 聊天服务建立 TCP 成功后，通将当前用户的 uid 跟连接 token 发给服务器
+        QJsonObject jsonObj;
 
+        jsonObj["uid"] = server_.uid;
+        jsonObj["token"] = server_.token;
+
+        QJsonDocument doc(jsonObj);
+        QString jsonString = doc.toJson(QJsonDocument::Indented);
+        // 通过槽函数队列来发送数据，实现消息有序发送
+        emit TcpMgr::GetInstance()->sig_send_data(ReqId::ID_CHAT_LOGIN, jsonString);
+    }
+    else {
+        showTip(tr("登录失败"), true);
+    }
+}
+
+void LoginDialog::slot_login_fail(int err)
+{
+    showTip(tr("[%1]登录失败").arg(err), true);
 }
 

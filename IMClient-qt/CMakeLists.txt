@@ -40,6 +40,27 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         clickedlabel.h clickedlabel.cpp
         resetdialog.h resetdialog.cpp resetdialog.ui
         tcpmgr.h tcpmgr.cpp
+        usermgr.h usermgr.cpp
+        chatdialog.h chatdialog.cpp chatdialog.ui
+        clickedbtn.h clickedbtn.cpp
+        customizededit.h customizededit.cpp
+        chatuserlist.h chatuserlist.cpp
+        chatuserwid.h chatuserwid.cpp chatuserwid.ui
+        listitembase.h listitembase.cpp
+        loadingdialog.h loadingdialog.cpp loadingdialog.ui
+        chatpage.h chatpage.cpp chatpage.ui
+        chatview.h chatview.cpp
+        bubbleframe.h bubbleframe.cpp
+        chatitembase.h chatitembase.cpp
+        textbubble.h textbubble.cpp
+        picturebubble.h picturebubble.cpp
+        messagetextedit.h messagetextedit.cpp
+        statewidget.h statewidget.cpp
+        resource/icon/red_point.png
+        resource/icon/addpeople_fill.svg resource/icon/addpeople.svg resource/icon/delete_fill.svg resource/icon/delete.svg resource/icon/document.png resource/icon/emoji.png resource/icon/hiden_hover.svg resource/icon/hiden.svg resource/icon/red_point.png resource/icon/refresh.svg resource/icon/search.svg resource/icon/searchfill.svg resource/icon/view_hover.svg resource/icon/view.svg
+        resource/background/Home.svg
+        resource/avatar/boy_blue.svg resource/avatar/boy_cyan.svg resource/avatar/boy_yellow.svg resource/avatar/girl_blue.svg resource/avatar/girl_purple.svg resource/avatar/gril_pink.svg
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET IMClient-qt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
